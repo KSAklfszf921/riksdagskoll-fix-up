@@ -1,6 +1,5 @@
 
-const BASE_URL = 'https://data.riksdagen.se';
-const RATE_LIMIT_DELAY = 400;
+import { BASE_URL, RATE_LIMIT_DELAY, delay } from './apiHelpers';
 
 export interface VoteringParams {
   rm?: string; // riksmöte
@@ -27,7 +26,6 @@ export interface VoteringResponse {
   };
 }
 
-const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 const normalizeToArray = <T>(data: T | T[]): T[] => {
   if (!data) return [];
@@ -49,13 +47,12 @@ export async function hamtaVoteringar(params: VoteringParams = {}): Promise<Vote
     
     while (true) {
       const pageUrl = `${url}&p=${currentPage}`;
-      console.log(`Fetching voteringar page ${currentPage}: ${pageUrl}`);
       
       const response = await fetch(pageUrl);
       
       if (!response.ok) {
         if (response.status === 429) {
-          console.log('Rate limit hit, waiting...');
+
           await delay(RATE_LIMIT_DELAY * 2);
           continue;
         }
@@ -65,21 +62,21 @@ export async function hamtaVoteringar(params: VoteringParams = {}): Promise<Vote
       const data: VoteringResponse = await response.json();
       
       if (!data.voteringlista?.votering) {
-        console.log('No more voteringar found');
+
         break;
       }
 
       const voteringList = normalizeToArray(data.voteringlista.votering);
       
       if (voteringList.length === 0) {
-        console.log('Empty results, stopping pagination');
+
         break;
       }
 
       allVoteringar.push(...voteringList);
       
       if (voteringList.length < 20) {
-        console.log('Last page reached');
+
         break;
       }
 
@@ -89,7 +86,7 @@ export async function hamtaVoteringar(params: VoteringParams = {}): Promise<Vote
       await delay(RATE_LIMIT_DELAY);
     }
 
-    console.log(`Found ${allVoteringar.length} voteringar total`);
+
     return allVoteringar;
 
   } catch (error) {
@@ -101,7 +98,6 @@ export async function hamtaVoteringar(params: VoteringParams = {}): Promise<Vote
 export async function hamtaVotering(voteringId: string): Promise<Votering | null> {
   try {
     const url = `${BASE_URL}/votering/?id=${voteringId}&utformat=json`;
-    console.log(`Fetching votering: ${url}`);
     const response = await fetch(url);
     if (!response.ok) {
       if (response.status === 404) return null;

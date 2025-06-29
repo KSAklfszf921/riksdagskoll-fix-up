@@ -1,6 +1,5 @@
 
-const BASE_URL = 'https://data.riksdagen.se';
-const RATE_LIMIT_DELAY = 400; // 400ms delay to respect 3 requests/second limit
+import { BASE_URL, RATE_LIMIT_DELAY, delay } from './apiHelpers';
 
 export interface AnforandeParams {
   rm?: string; // Riksmöte, t.ex. "2023/24"
@@ -36,8 +35,7 @@ export interface AnforandeResponse {
   };
 }
 
-// Helper function to add delay between API calls
-const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
 
 export async function sokAnforanden(params: AnforandeParams = {}): Promise<Anforande[]> {
   try {
@@ -55,13 +53,12 @@ export async function sokAnforanden(params: AnforandeParams = {}): Promise<Anfor
     
     while (true) {
       const pageUrl = `${url}&p=${currentPage}`;
-      console.log(`Fetching page ${currentPage}: ${pageUrl}`);
       
       const response = await fetch(pageUrl);
       
       if (!response.ok) {
         if (response.status === 429) {
-          console.log('Rate limit hit, waiting...');
+          
           await delay(RATE_LIMIT_DELAY * 2);
           continue;
         }
@@ -71,7 +68,7 @@ export async function sokAnforanden(params: AnforandeParams = {}): Promise<Anfor
       const data: AnforandeResponse = await response.json();
       
       if (!data.anforanden?.anforande) {
-        console.log('No more results found');
+        
         break;
       }
 
@@ -83,7 +80,7 @@ export async function sokAnforanden(params: AnforandeParams = {}): Promise<Anfor
       }
 
       if (anforandenList.length === 0) {
-        console.log('Empty results, stopping pagination');
+        
         break;
       }
 
@@ -91,7 +88,7 @@ export async function sokAnforanden(params: AnforandeParams = {}): Promise<Anfor
       
       // If we got fewer than expected results, we're likely on the last page
       if (anforandenList.length < 10) {
-        console.log('Last page reached');
+        
         break;
       }
 
@@ -106,7 +103,6 @@ export async function sokAnforanden(params: AnforandeParams = {}): Promise<Anfor
       await delay(RATE_LIMIT_DELAY);
     }
 
-    console.log(`Found ${allAnforanden.length} anföranden total`);
     return allAnforanden;
 
   } catch (error) {
@@ -118,7 +114,6 @@ export async function sokAnforanden(params: AnforandeParams = {}): Promise<Anfor
 export async function hamtaAnforande(anforandeId: string): Promise<Anforande | null> {
   try {
     const url = `${BASE_URL}/anforande/?id=${anforandeId}&utformat=json`;
-    console.log(`Fetching anförande: ${url}`);
     
     const response = await fetch(url);
     

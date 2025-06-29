@@ -6,7 +6,7 @@ import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { Download, Users, Database, RefreshCw, CheckCircle, AlertCircle, FileText, Vote } from 'lucide-react';
 import { getCurrentMembers, getFormerMembers, hamtaPerson } from '@/utils/personApi';
-import { sparaLedamot, hamtaLedamoter } from '@/utils/supabasePersons';
+import { sparaLedamot, hamtaLedamoter } from '@/utils/supabaseData';
 import { hamtaRecentaAnforanden } from '@/utils/anforandeApi';
 import { hamtaDokument } from '@/utils/dokumentApi';
 import { hamtaVoteringar } from '@/utils/voteringApi';
@@ -40,7 +40,6 @@ const DataManager: React.FC = () => {
       toast.info('Hämtar nuvarande ledamöter från Riksdagens API...');
       
       const members = await getCurrentMembers();
-      console.log(`Hittade ${members.length} nuvarande ledamöter`);
       
       setImportStats({ total: members.length, processed: 0, success: 0, errors: 0 });
       
@@ -88,7 +87,6 @@ const DataManager: React.FC = () => {
       toast.info('Hämtar senaste anföranden...');
       
       const anforanden = await hamtaRecentaAnforanden(100);
-      console.log(`Hittade ${anforanden.length} anföranden`);
       
       setImportStats({ total: anforanden.length, processed: 0, success: 0, errors: 0 });
       
@@ -134,7 +132,6 @@ const DataManager: React.FC = () => {
       toast.info('Hämtar senaste dokument...');
       
       const dokument = await hamtaDokument({ p: 1 });
-      console.log(`Hittade ${dokument.length} dokument`);
       
       setImportStats({ total: dokument.length, processed: 0, success: 0, errors: 0 });
       

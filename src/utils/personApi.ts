@@ -1,6 +1,5 @@
 
-const BASE_URL = 'https://data.riksdagen.se';
-const RATE_LIMIT_DELAY = 400; // 400ms delay to respect 3 requests/second limit
+import { BASE_URL, RATE_LIMIT_DELAY, delay } from './apiHelpers';
 
 export interface PersonParams {
   kategori?: string; // nuvarande, tidigare, statsrad
@@ -64,8 +63,6 @@ export interface PersonResponse {
   };
 }
 
-// Helper function to add delay
-const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 // Normalize array/object responses
 const normalizeToArray = <T>(data: T | T[]): T[] => {
@@ -88,13 +85,12 @@ export async function sokPersoner(params: PersonParams = {}): Promise<Person[]> 
     
     while (true) {
       const pageUrl = `${url}&p=${currentPage}`;
-      console.log(`Fetching persons page ${currentPage}: ${pageUrl}`);
       
       const response = await fetch(pageUrl);
       
       if (!response.ok) {
         if (response.status === 429) {
-          console.log('Rate limit hit, waiting...');
+
           await delay(RATE_LIMIT_DELAY * 2);
           continue;
         }
@@ -104,14 +100,14 @@ export async function sokPersoner(params: PersonParams = {}): Promise<Person[]> 
       const data: PersonResponse = await response.json();
       
       if (!data.personlista?.person) {
-        console.log('No more results found');
+
         break;
       }
 
       const personList = normalizeToArray(data.personlista.person);
       
       if (personList.length === 0) {
-        console.log('Empty results, stopping pagination');
+
         break;
       }
 
@@ -119,7 +115,7 @@ export async function sokPersoner(params: PersonParams = {}): Promise<Person[]> 
       
       // If we got fewer than expected results, we're likely on the last page
       if (personList.length < 20) {
-        console.log('Last page reached');
+
         break;
       }
 
@@ -134,7 +130,7 @@ export async function sokPersoner(params: PersonParams = {}): Promise<Person[]> 
       await delay(RATE_LIMIT_DELAY);
     }
 
-    console.log(`Found ${allPersons.length} persons total`);
+
     return allPersons;
 
   } catch (error) {
@@ -146,7 +142,6 @@ export async function sokPersoner(params: PersonParams = {}): Promise<Person[]> 
 export async function hamtaPerson(intressentId: string): Promise<PersonDetailed | null> {
   try {
     const url = `${BASE_URL}/person/?iid=${intressentId}&utformat=json`;
-    console.log(`Fetching person: ${url}`);
     
     const response = await fetch(url);
     

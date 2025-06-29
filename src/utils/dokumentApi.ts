@@ -1,6 +1,5 @@
 
-const BASE_URL = 'https://data.riksdagen.se';
-const RATE_LIMIT_DELAY = 400;
+import { BASE_URL, RATE_LIMIT_DELAY, delay } from './apiHelpers';
 
 export interface DokumentParams {
   rm?: string; // riksmöte
@@ -33,8 +32,6 @@ export interface DokumentResponse {
   };
 }
 
-const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
-
 const normalizeToArray = <T>(data: T | T[]): T[] => {
   if (!data) return [];
   return Array.isArray(data) ? data : [data];
@@ -55,13 +52,12 @@ export async function hamtaDokument(params: DokumentParams = {}): Promise<Dokume
     
     while (true) {
       const pageUrl = `${url}&p=${currentPage}`;
-      console.log(`Fetching dokument page ${currentPage}: ${pageUrl}`);
       
       const response = await fetch(pageUrl);
       
       if (!response.ok) {
         if (response.status === 429) {
-          console.log('Rate limit hit, waiting...');
+          
           await delay(RATE_LIMIT_DELAY * 2);
           continue;
         }
@@ -71,21 +67,21 @@ export async function hamtaDokument(params: DokumentParams = {}): Promise<Dokume
       const data: DokumentResponse = await response.json();
       
       if (!data.dokumentlista?.dokument) {
-        console.log('No more dokument found');
+        
         break;
       }
 
       const dokumentList = normalizeToArray(data.dokumentlista.dokument);
       
       if (dokumentList.length === 0) {
-        console.log('Empty results, stopping pagination');
+        
         break;
       }
 
       allDokument.push(...dokumentList);
       
       if (dokumentList.length < 20) {
-        console.log('Last page reached');
+        
         break;
       }
 
@@ -95,7 +91,7 @@ export async function hamtaDokument(params: DokumentParams = {}): Promise<Dokume
       await delay(RATE_LIMIT_DELAY);
     }
 
-    console.log(`Found ${allDokument.length} dokument total`);
+    
     return allDokument;
 
   } catch (error) {
@@ -107,7 +103,6 @@ export async function hamtaDokument(params: DokumentParams = {}): Promise<Dokume
 export async function hamtaDokumentById(dokId: string): Promise<Dokument | null> {
   try {
     const url = `${BASE_URL}/dokument/?dok_id=${dokId}&utformat=json`;
-    console.log(`Fetching dokument: ${url}`);
     const response = await fetch(url);
     if (!response.ok) {
       if (response.status === 404) return null;
