@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Calendar, User, ExternalLink } from 'lucide-react';
-import { Anforande } from '@/utils/riksdagApi';
+import { Anforande } from '@/utils/anforandeApi';
 
 interface AnforandeCardProps {
   anforande: Anforande;
