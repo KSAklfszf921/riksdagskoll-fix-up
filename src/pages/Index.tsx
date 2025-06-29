@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Search, Bell, Calendar, Users, FileText, ExternalLink, Mic, Database, Vote, TrendingUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -10,23 +9,20 @@ import AnforandeCard from '@/components/AnforandeCard';
 import AnforandeSearch from '@/components/AnforandeSearch';
 import DataManager from '@/components/DataManager';
 import { useRealTimeStats } from '@/hooks/useRealTimeStats';
-
 const Index = () => {
   const [recentSpeeches, setRecentSpeeches] = useState<Anforande[]>([]);
   const [loadingSpeeches, setLoadingSpeeches] = useState(true);
   const [showSearch, setShowSearch] = useState(false);
   const [showDataManager, setShowDataManager] = useState(false);
-  
-  const { 
-    totalLedamoter, 
-    totalAnforanden, 
-    totalDokument, 
+  const {
+    totalLedamoter,
+    totalAnforanden,
+    totalDokument,
     totalVoteringar,
     partiFordelning,
     recentAnforanden,
-    loading: statsLoading 
+    loading: statsLoading
   } = useRealTimeStats();
-
   useEffect(() => {
     const fetchRecentSpeeches = async () => {
       try {
@@ -42,11 +38,7 @@ const Index = () => {
     };
     fetchRecentSpeeches();
   }, []);
-
-  const topPartier = Object.entries(partiFordelning)
-    .sort(([,a], [,b]) => b - a)
-    .slice(0, 5);
-
+  const topPartier = Object.entries(partiFordelning).sort(([, a], [, b]) => b - a).slice(0, 5);
   return <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-yellow-50">
       {/* Header */}
       <header className="bg-white border-b border-blue-100 shadow-sm">
@@ -92,7 +84,7 @@ const Index = () => {
         </section>}
 
       {/* Hero Section */}
-      <section className="py-16 px-4">
+      <section className="px-4 py-[20px]">
         <div className="container mx-auto text-center">
           <h2 className="text-4xl md:text-5xl font-bold text-blue-900 mb-6">
             Följ Sveriges riksdag
@@ -165,8 +157,7 @@ const Index = () => {
       </section>
 
       {/* Party Distribution Section */}
-      {topPartier.length > 0 && (
-        <section className="py-16 px-4 bg-white">
+      {topPartier.length > 0 && <section className="py-16 px-4 bg-white">
           <div className="container mx-auto">
             <div className="flex items-center justify-between mb-8">
               <h3 className="text-3xl font-bold text-blue-900">Partifördelning</h3>
@@ -174,62 +165,22 @@ const Index = () => {
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-              {topPartier.map(([parti, antal]) => (
-                <Card key={parti} className="border-blue-100 hover:shadow-lg transition-all">
+              {topPartier.map(([parti, antal]) => <Card key={parti} className="border-blue-100 hover:shadow-lg transition-all">
                   <CardContent className="pt-6 text-center">
                     <div className="text-3xl font-bold text-blue-900 mb-2">{antal}</div>
                     <div className="text-lg font-medium text-blue-700">{parti}</div>
                     <div className="text-sm text-blue-500">ledamöter</div>
                   </CardContent>
-                </Card>
-              ))}
+                </Card>)}
             </div>
           </div>
-        </section>
-      )}
+        </section>}
 
       {/* Recent Speeches Section */}
-      <section className="py-16 px-4 bg-blue-50">
-        <div className="container mx-auto">
-          <div className="flex items-center justify-between mb-8">
-            <h3 className="text-3xl font-bold text-blue-900">Senaste anföranden</h3>
-            <Button variant="outline" className="border-blue-200 text-blue-700 hover:bg-blue-50" onClick={() => setShowSearch(true)}>
-              Sök fler anföranden <Search className="w-4 h-4 ml-2" />
-            </Button>
-          </div>
-          
-          {loadingSpeeches ? <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {[1, 2, 3].map(i => <Card key={i} className="border-blue-100 animate-pulse">
-                  <CardHeader>
-                    <div className="h-4 bg-blue-100 rounded w-3/4"></div>
-                    <div className="h-3 bg-blue-50 rounded w-1/2"></div>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-2">
-                      <div className="h-3 bg-blue-50 rounded"></div>
-                      <div className="h-3 bg-blue-50 rounded w-5/6"></div>
-                      <div className="h-3 bg-blue-50 rounded w-4/6"></div>
-                    </div>
-                  </CardContent>
-                </Card>)}
-            </div> : recentSpeeches.length > 0 ? <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-              {recentSpeeches.map(speech => <AnforandeCard key={speech.anforande_id} anforande={speech} />)}
-            </div> : <Card className="border-yellow-200 bg-yellow-50">
-              <CardContent className="pt-6 text-center">
-                <Mic className="w-12 h-12 text-yellow-600 mx-auto mb-4" />
-                <p className="text-yellow-800 font-medium">Kunde inte hämta senaste anföranden</p>
-                <p className="text-yellow-600 text-sm mt-1">Kontrollera internetanslutningen och försök igen.</p>
-                <Button variant="outline" className="mt-4 border-yellow-300 text-yellow-700 hover:bg-yellow-100" onClick={() => window.location.reload()}>
-                  Försök igen
-                </Button>
-              </CardContent>
-            </Card>}
-        </div>
-      </section>
+      
 
       {/* Recent Data from Database */}
-      {recentAnforanden.length > 0 && (
-        <section className="py-16 px-4 bg-white">
+      {recentAnforanden.length > 0 && <section className="py-16 px-4 bg-white">
           <div className="container mx-auto">
             <div className="flex items-center justify-between mb-8">
               <h3 className="text-3xl font-bold text-blue-900">Senast lagrade anföranden</h3>
@@ -237,8 +188,7 @@ const Index = () => {
             </div>
             
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {recentAnforanden.map((anforande: any) => (
-                <Card key={anforande.anforande_id} className="border-blue-100 hover:shadow-lg transition-all">
+              {recentAnforanden.map((anforande: any) => <Card key={anforande.anforande_id} className="border-blue-100 hover:shadow-lg transition-all">
                   <CardHeader>
                     <div className="flex items-start justify-between">
                       <CardTitle className="text-lg text-blue-900 leading-tight">
@@ -255,65 +205,13 @@ const Index = () => {
                       {anforande.anforande?.substring(0, 200)}...
                     </p>
                   </CardContent>
-                </Card>
-              ))}
+                </Card>)}
             </div>
           </div>
-        </section>
-      )}
+        </section>}
 
       {/* Footer */}
-      <footer className="bg-blue-900 text-white py-12 px-4">
-        <div className="container mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div>
-              <div className="flex items-center space-x-2 mb-4">
-                <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                  <FileText className="w-5 h-5 text-white" />
-                </div>
-                <span className="text-xl font-bold">Riksdagskoll</span>
-              </div>
-              <p className="text-blue-200">
-                Transparens och demokratisk insyn för alla svenska medborgare.
-              </p>
-            </div>
-            
-            <div>
-              <h5 className="font-semibold mb-4">Navigation</h5>
-              <ul className="space-y-2 text-blue-200">
-                <li><a href="#" className="hover:text-white transition-colors">Aktuellt</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Ärenden</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Ledamöter</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Anföranden</a></li>
-              </ul>
-            </div>
-            
-            <div>
-              <h5 className="font-semibold mb-4">Information</h5>
-              <ul className="space-y-2 text-blue-200">
-                <li><a href="#" className="hover:text-white transition-colors">Om oss</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Kontakt</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Integritetspolicy</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">API-dokumentation</a></li>
-              </ul>
-            </div>
-            
-            <div>
-              <h5 className="font-semibold mb-4">Data</h5>
-              <ul className="space-y-2 text-blue-200">
-                <li>Ledamöter: {totalLedamoter}</li>
-                <li>Anföranden: {totalAnforanden}</li>
-                <li>Dokument: {totalDokument}</li>
-                <li>Voteringar: {totalVoteringar}</li>
-              </ul>
-            </div>
-          </div>
-          
-          <div className="border-t border-blue-800 mt-8 pt-8 text-center text-blue-200">
-            <p>&copy; 2024 Riksdagskoll. Byggd för transparens och demokrati med verklig data från Riksdagen.</p>
-          </div>
-        </div>
-      </footer>
+      
     </div>;
 };
 export default Index;
