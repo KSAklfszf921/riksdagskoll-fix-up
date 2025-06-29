@@ -97,3 +97,21 @@ export async function hamtaVoteringar(params: VoteringParams = {}): Promise<Vote
     throw error;
   }
 }
+
+export async function hamtaVotering(voteringId: string): Promise<Votering | null> {
+  try {
+    const url = `${BASE_URL}/votering/?id=${voteringId}&utformat=json`;
+    console.log(`Fetching votering: ${url}`);
+    const response = await fetch(url);
+    if (!response.ok) {
+      if (response.status === 404) return null;
+      throw new Error(`API request failed: ${response.status}`);
+    }
+    const data: VoteringResponse = await response.json();
+    return data.voteringlista?.votering ? normalizeToArray(data.voteringlista.votering)[0] : null;
+  } catch (error) {
+    console.error('Error fetching votering:', error);
+    throw error;
+  }
+}
+

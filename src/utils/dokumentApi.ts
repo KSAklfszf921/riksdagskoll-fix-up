@@ -103,3 +103,21 @@ export async function hamtaDokument(params: DokumentParams = {}): Promise<Dokume
     throw error;
   }
 }
+
+export async function hamtaDokumentById(dokId: string): Promise<Dokument | null> {
+  try {
+    const url = `${BASE_URL}/dokument/?dok_id=${dokId}&utformat=json`;
+    console.log(`Fetching dokument: ${url}`);
+    const response = await fetch(url);
+    if (!response.ok) {
+      if (response.status === 404) return null;
+      throw new Error(`API request failed: ${response.status}`);
+    }
+    const data: DokumentResponse = await response.json();
+    return data.dokumentlista?.dokument ? normalizeToArray(data.dokumentlista.dokument)[0] : null;
+  } catch (error) {
+    console.error('Error fetching dokument:', error);
+    throw error;
+  }
+}
+
