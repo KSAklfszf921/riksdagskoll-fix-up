@@ -51,7 +51,6 @@ const AnforandeSearch: React.FC = () => {
         params.parti = selectedParty;
       }
 
-      console.log('Searching with params:', params);
       const searchResults = await sokAnforanden(params);
       
       // Limit to 20 results for better UX

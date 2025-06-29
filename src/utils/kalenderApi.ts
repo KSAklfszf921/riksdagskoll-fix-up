@@ -1,7 +1,5 @@
 import cheerio from 'cheerio';
-
-const BASE_URL = 'https://data.riksdagen.se';
-const RATE_LIMIT_DELAY = 400;
+import { BASE_URL, RATE_LIMIT_DELAY, delay } from './apiHelpers';
 
 export interface KalenderHandelse {
   datum: string;
@@ -11,11 +9,9 @@ export interface KalenderHandelse {
   beskrivning: string;
 }
 
-const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 export async function hamtaKalender(from: string, tom: string): Promise<KalenderHandelse[]> {
   const url = `${BASE_URL}/kalender/?from=${from}&tom=${tom}&utformat=html`;
-  console.log(`Fetching kalender: ${url}`);
   const response = await fetch(url);
   if (!response.ok) {
     throw new Error(`API request failed: ${response.status}`);

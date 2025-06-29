@@ -26,9 +26,8 @@ const Index = () => {
   useEffect(() => {
     const fetchRecentSpeeches = async () => {
       try {
-        console.log('Fetching recent speeches...');
         const speeches = await getRecentAnforanden(3);
-        console.log('Fetched speeches:', speeches);
+
         setRecentSpeeches(speeches);
       } catch (error) {
         console.error('Error fetching recent speeches:', error);
@@ -211,7 +210,12 @@ const Index = () => {
         </section>}
 
       {/* Footer */}
-      
-    </div>;
+      <footer className="bg-blue-900 text-white py-8 mt-12">
+        <div className="container mx-auto text-center text-sm">
+          &copy; {new Date().getFullYear()} Riksdagskoll
+        </div>
+      </footer>
+    </div>
+  );
 };
 export default Index;
