@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Bell, Calendar, Users, FileText, ExternalLink, Mic } from 'lucide-react';
+import { Search, Bell, Calendar, Users, FileText, ExternalLink, Mic, Database } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -7,11 +7,13 @@ import { Badge } from '@/components/ui/badge';
 import { getRecentAnforanden, Anforande } from '@/utils/riksdagApi';
 import AnforandeCard from '@/components/AnforandeCard';
 import AnforandeSearch from '@/components/AnforandeSearch';
+import DataManager from '@/components/DataManager';
 
 const Index = () => {
   const [recentSpeeches, setRecentSpeeches] = useState<Anforande[]>([]);
   const [loadingSpeeches, setLoadingSpeeches] = useState(true);
   const [showSearch, setShowSearch] = useState(false);
+  const [showDataManager, setShowDataManager] = useState(false);
 
   const currentIssues = [
     {
@@ -109,6 +111,15 @@ const Index = () => {
                 <Search className="w-4 h-4 mr-2" />
                 Sök anföranden
               </Button>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="border-green-200 text-green-700 hover:bg-green-50"
+                onClick={() => setShowDataManager(!showDataManager)}
+              >
+                <Database className="w-4 h-4 mr-2" />
+                Hantera data
+              </Button>
             </nav>
           </div>
         </div>
@@ -119,6 +130,15 @@ const Index = () => {
         <section className="py-8 px-4 bg-blue-50 border-b">
           <div className="container mx-auto">
             <AnforandeSearch />
+          </div>
+        </section>
+      )}
+
+      {/* Data Manager Section */}
+      {showDataManager && (
+        <section className="py-8 px-4 bg-green-50 border-b">
+          <div className="container mx-auto">
+            <DataManager />
           </div>
         </section>
       )}

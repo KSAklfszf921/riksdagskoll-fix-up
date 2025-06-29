@@ -9,7 +9,162 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      kontaktuppgifter: {
+        Row: {
+          created_at: string | null
+          id: number
+          iid: string | null
+          typ: string | null
+          uppgift: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: number
+          iid?: string | null
+          typ?: string | null
+          uppgift?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: number
+          iid?: string | null
+          typ?: string | null
+          uppgift?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "kontaktuppgifter_iid_fkey"
+            columns: ["iid"]
+            isOneToOne: false
+            referencedRelation: "ledamoter"
+            referencedColumns: ["iid"]
+          },
+        ]
+      }
+      ledamoter: {
+        Row: {
+          bild_url_192: string | null
+          bild_url_80: string | null
+          biografi_xml_url: string | null
+          created_at: string | null
+          efternamn: string | null
+          fodd_ar: number | null
+          iid: string
+          kon: string | null
+          parti: string | null
+          senast_uppdaterad: string | null
+          status: string | null
+          tilltalsnamn: string | null
+          valkrets: string | null
+          webbplats_url: string | null
+        }
+        Insert: {
+          bild_url_192?: string | null
+          bild_url_80?: string | null
+          biografi_xml_url?: string | null
+          created_at?: string | null
+          efternamn?: string | null
+          fodd_ar?: number | null
+          iid: string
+          kon?: string | null
+          parti?: string | null
+          senast_uppdaterad?: string | null
+          status?: string | null
+          tilltalsnamn?: string | null
+          valkrets?: string | null
+          webbplats_url?: string | null
+        }
+        Update: {
+          bild_url_192?: string | null
+          bild_url_80?: string | null
+          biografi_xml_url?: string | null
+          created_at?: string | null
+          efternamn?: string | null
+          fodd_ar?: number | null
+          iid?: string
+          kon?: string | null
+          parti?: string | null
+          senast_uppdaterad?: string | null
+          status?: string | null
+          tilltalsnamn?: string | null
+          valkrets?: string | null
+          webbplats_url?: string | null
+        }
+        Relationships: []
+      }
+      mandatperioder: {
+        Row: {
+          created_at: string | null
+          id: number
+          iid: string | null
+          period: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: number
+          iid?: string | null
+          period: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: number
+          iid?: string | null
+          period?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mandatperioder_iid_fkey"
+            columns: ["iid"]
+            isOneToOne: false
+            referencedRelation: "ledamoter"
+            referencedColumns: ["iid"]
+          },
+        ]
+      }
+      uppdrag: {
+        Row: {
+          created_at: string | null
+          from_date: string | null
+          id: number
+          iid: string | null
+          organ: string | null
+          roll: string | null
+          status: string | null
+          tom_date: string | null
+          typ: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          from_date?: string | null
+          id?: number
+          iid?: string | null
+          organ?: string | null
+          roll?: string | null
+          status?: string | null
+          tom_date?: string | null
+          typ?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          from_date?: string | null
+          id?: number
+          iid?: string | null
+          organ?: string | null
+          roll?: string | null
+          status?: string | null
+          tom_date?: string | null
+          typ?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "uppdrag_iid_fkey"
+            columns: ["iid"]
+            isOneToOne: false
+            referencedRelation: "ledamoter"
+            referencedColumns: ["iid"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
