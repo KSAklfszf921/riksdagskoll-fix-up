@@ -1,5 +1,6 @@
+
 import React, { useState, useEffect } from 'react';
-import { Search, Bell, Calendar, Users, FileText, ExternalLink, Mic, Database } from 'lucide-react';
+import { Search, Bell, Calendar, Users, FileText, ExternalLink, Mic, Database, Vote, TrendingUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -8,46 +9,24 @@ import { getRecentAnforanden, Anforande } from '@/utils/riksdagApi';
 import AnforandeCard from '@/components/AnforandeCard';
 import AnforandeSearch from '@/components/AnforandeSearch';
 import DataManager from '@/components/DataManager';
+import { useRealTimeStats } from '@/hooks/useRealTimeStats';
+
 const Index = () => {
   const [recentSpeeches, setRecentSpeeches] = useState<Anforande[]>([]);
   const [loadingSpeeches, setLoadingSpeeches] = useState(true);
   const [showSearch, setShowSearch] = useState(false);
   const [showDataManager, setShowDataManager] = useState(false);
-  const currentIssues = [{
-    id: 1,
-    title: "Budgetproposition 2024",
-    description: "Regeringens förslag till statsbudget för 2024",
-    status: "Pågående",
-    committee: "Finansutskottet",
-    date: "2024-01-15"
-  }, {
-    id: 2,
-    title: "Klimatlagen - ändringsförslag",
-    description: "Förslag om skärpta klimatmål och nya åtgärder",
-    status: "Remiss",
-    committee: "Miljö och jordbruksutskottet",
-    date: "2024-01-12"
-  }, {
-    id: 3,
-    title: "Digitalisering av offentlig sektor",
-    description: "Satsning på e-tjänster och digital infrastruktur",
-    status: "Beslutad",
-    committee: "Näringsutskottet",
-    date: "2024-01-10"
-  }];
-  const recentNews = [{
-    title: "Ny partiledardebatt planerad för nästa vecka",
-    summary: "Fokus kommer ligga på ekonomisk politik och klimatfrågor",
-    time: "2 timmar sedan"
-  }, {
-    title: "Utskottsmöte om sjukvårdspolitik",
-    summary: "Socialutskottet diskuterar vårdköer och personalbrister",
-    time: "4 timmar sedan"
-  }, {
-    title: "Interpellationsdebatt om bostadspolitik",
-    summary: "Opposition ifrågasätter regeringens bostadsstrategi",
-    time: "6 timmar sedan"
-  }];
+  
+  const { 
+    totalLedamoter, 
+    totalAnforanden, 
+    totalDokument, 
+    totalVoteringar,
+    partiFordelning,
+    recentAnforanden,
+    loading: statsLoading 
+  } = useRealTimeStats();
+
   useEffect(() => {
     const fetchRecentSpeeches = async () => {
       try {
@@ -63,6 +42,11 @@ const Index = () => {
     };
     fetchRecentSpeeches();
   }, []);
+
+  const topPartier = Object.entries(partiFordelning)
+    .sort(([,a], [,b]) => b - a)
+    .slice(0, 5);
+
   return <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-yellow-50">
       {/* Header */}
       <header className="bg-white border-b border-blue-100 shadow-sm">
@@ -74,12 +58,9 @@ const Index = () => {
               </div>
               <div>
                 <h1 className="text-2xl font-bold text-blue-900">Riksdagskoll</h1>
-                
               </div>
             </div>
             <nav className="hidden md:flex items-center space-x-6">
-              
-              
               <a href="#" className="text-blue-700 hover:text-blue-900 font-medium transition-colors">
                 Ledamöter
               </a>
@@ -117,7 +98,6 @@ const Index = () => {
             Följ Sveriges riksdag
           </h2>
           
-          
           {/* Search Bar */}
           <div className="max-w-2xl mx-auto mb-12">
             <div className="flex gap-2">
@@ -131,45 +111,85 @@ const Index = () => {
             </div>
           </div>
 
-          {/* Quick Stats */}
+          {/* Real-time Stats */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 max-w-4xl mx-auto">
             <Card className="border-blue-100 hover:shadow-lg transition-shadow">
               <CardContent className="pt-6 text-center">
                 <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
                   <Users className="w-6 h-6 text-blue-600" />
                 </div>
-                <div className="text-2xl font-bold text-blue-900">349</div>
+                <div className="text-2xl font-bold text-blue-900">
+                  {statsLoading ? '...' : totalLedamoter}
+                </div>
                 <div className="text-sm text-blue-600">Riksdagsledamöter</div>
               </CardContent>
             </Card>
             
-            
-            
             <Card className="border-blue-100 hover:shadow-lg transition-shadow">
               <CardContent className="pt-6 text-center">
                 <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                  <Calendar className="w-6 h-6 text-green-600" />
+                  <Mic className="w-6 h-6 text-green-600" />
                 </div>
-                <div className="text-2xl font-bold text-blue-900">43</div>
-                <div className="text-sm text-blue-600">Möten denna vecka</div>
+                <div className="text-2xl font-bold text-blue-900">
+                  {statsLoading ? '...' : totalAnforanden}
+                </div>
+                <div className="text-sm text-blue-600">Anföranden</div>
               </CardContent>
             </Card>
             
             <Card className="border-blue-100 hover:shadow-lg transition-shadow">
               <CardContent className="pt-6 text-center">
                 <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                  <Mic className="w-6 h-6 text-purple-600" />
+                  <FileText className="w-6 h-6 text-purple-600" />
                 </div>
-                <div className="text-2xl font-bold text-blue-900">{recentSpeeches.length > 0 ? recentSpeeches.length : '...'}</div>
-                <div className="text-sm text-blue-600">Senaste anföranden</div>
+                <div className="text-2xl font-bold text-blue-900">
+                  {statsLoading ? '...' : totalDokument}
+                </div>
+                <div className="text-sm text-blue-600">Dokument</div>
+              </CardContent>
+            </Card>
+
+            <Card className="border-blue-100 hover:shadow-lg transition-shadow">
+              <CardContent className="pt-6 text-center">
+                <div className="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                  <Vote className="w-6 h-6 text-yellow-600" />
+                </div>
+                <div className="text-2xl font-bold text-blue-900">
+                  {statsLoading ? '...' : totalVoteringar}
+                </div>
+                <div className="text-sm text-blue-600">Voteringar</div>
               </CardContent>
             </Card>
           </div>
         </div>
       </section>
 
+      {/* Party Distribution Section */}
+      {topPartier.length > 0 && (
+        <section className="py-16 px-4 bg-white">
+          <div className="container mx-auto">
+            <div className="flex items-center justify-between mb-8">
+              <h3 className="text-3xl font-bold text-blue-900">Partifördelning</h3>
+              <TrendingUp className="w-6 h-6 text-blue-600" />
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+              {topPartier.map(([parti, antal]) => (
+                <Card key={parti} className="border-blue-100 hover:shadow-lg transition-all">
+                  <CardContent className="pt-6 text-center">
+                    <div className="text-3xl font-bold text-blue-900 mb-2">{antal}</div>
+                    <div className="text-lg font-medium text-blue-700">{parti}</div>
+                    <div className="text-sm text-blue-500">ledamöter</div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* Recent Speeches Section */}
-      <section className="py-16 px-4 bg-white">
+      <section className="py-16 px-4 bg-blue-50">
         <div className="container mx-auto">
           <div className="flex items-center justify-between mb-8">
             <h3 className="text-3xl font-bold text-blue-900">Senaste anföranden</h3>
@@ -207,44 +227,40 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Current Issues Section */}
-      <section className="py-16 px-4 bg-blue-50">
-        <div className="container mx-auto">
-          <div className="flex items-center justify-between mb-8">
-            <h3 className="text-3xl font-bold text-blue-900">Aktuella ärenden</h3>
-            <Button variant="outline" className="border-blue-200 text-blue-700 hover:bg-blue-50">
-              Se alla ärenden <ExternalLink className="w-4 h-4 ml-2" />
-            </Button>
+      {/* Recent Data from Database */}
+      {recentAnforanden.length > 0 && (
+        <section className="py-16 px-4 bg-white">
+          <div className="container mx-auto">
+            <div className="flex items-center justify-between mb-8">
+              <h3 className="text-3xl font-bold text-blue-900">Senast lagrade anföranden</h3>
+              <Badge variant="secondary">{recentAnforanden.length} av {totalAnforanden} totalt</Badge>
+            </div>
+            
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {recentAnforanden.map((anforande: any) => (
+                <Card key={anforande.anforande_id} className="border-blue-100 hover:shadow-lg transition-all">
+                  <CardHeader>
+                    <div className="flex items-start justify-between">
+                      <CardTitle className="text-lg text-blue-900 leading-tight">
+                        {anforande.rubrik || 'Anförande'}
+                      </CardTitle>
+                      <Badge variant="outline">{anforande.parti}</Badge>
+                    </div>
+                    <CardDescription>
+                      {anforande.talare} • {anforande.dok_datum}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm text-gray-600 line-clamp-3">
+                      {anforande.anforande?.substring(0, 200)}...
+                    </p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
           </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {currentIssues.map(issue => <Card key={issue.id} className="border-blue-100 hover:shadow-lg transition-all hover:border-blue-200 bg-white">
-                <CardHeader>
-                  <div className="flex items-start justify-between">
-                    <CardTitle className="text-lg text-blue-900 leading-tight">
-                      {issue.title}
-                    </CardTitle>
-                    <Badge variant={issue.status === 'Pågående' ? 'default' : issue.status === 'Beslutad' ? 'secondary' : 'outline'} className={issue.status === 'Pågående' ? 'bg-blue-100 text-blue-800' : ''}>
-                      {issue.status}
-                    </Badge>
-                  </div>
-                  <CardDescription className="text-blue-600">
-                    {issue.description}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex items-center justify-between text-sm text-blue-500">
-                    <span>{issue.committee}</span>
-                    <span>{issue.date}</span>
-                  </div>
-                </CardContent>
-              </Card>)}
-          </div>
-        </div>
-      </section>
-
-      {/* News Section */}
-      
+        </section>
+      )}
 
       {/* Footer */}
       <footer className="bg-blue-900 text-white py-12 px-4">
@@ -283,23 +299,18 @@ const Index = () => {
             </div>
             
             <div>
-              <h5 className="font-semibold mb-4">Följ oss</h5>
-              <p className="text-blue-200 mb-4">
-                Håll dig uppdaterad via våra sociala medier
-              </p>
-              <div className="flex space-x-4">
-                <Button variant="outline" size="sm" className="border-blue-400 text-blue-200 hover:bg-blue-800">
-                  Twitter
-                </Button>
-                <Button variant="outline" size="sm" className="border-blue-400 text-blue-200 hover:bg-blue-800">
-                  LinkedIn
-                </Button>
-              </div>
+              <h5 className="font-semibold mb-4">Data</h5>
+              <ul className="space-y-2 text-blue-200">
+                <li>Ledamöter: {totalLedamoter}</li>
+                <li>Anföranden: {totalAnforanden}</li>
+                <li>Dokument: {totalDokument}</li>
+                <li>Voteringar: {totalVoteringar}</li>
+              </ul>
             </div>
           </div>
           
           <div className="border-t border-blue-800 mt-8 pt-8 text-center text-blue-200">
-            <p>&copy; 2024 Riksdagskoll. Byggd för transparens och demokrati.</p>
+            <p>&copy; 2024 Riksdagskoll. Byggd för transparens och demokrati med verklig data från Riksdagen.</p>
           </div>
         </div>
       </footer>

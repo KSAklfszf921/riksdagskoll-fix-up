@@ -9,25 +9,141 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      kontaktuppgifter: {
+      anforanden: {
+        Row: {
+          anforande: string | null
+          anforande_id: string
+          anforandetyp: string | null
+          created_at: string | null
+          dok_datum: string | null
+          dok_titel: string | null
+          intressent_id: string | null
+          kon: string | null
+          nummer: string | null
+          parti: string | null
+          protokoll_url_xml: string | null
+          relaterat_dokument_url: string | null
+          rubrik: string | null
+          talare: string | null
+        }
+        Insert: {
+          anforande?: string | null
+          anforande_id: string
+          anforandetyp?: string | null
+          created_at?: string | null
+          dok_datum?: string | null
+          dok_titel?: string | null
+          intressent_id?: string | null
+          kon?: string | null
+          nummer?: string | null
+          parti?: string | null
+          protokoll_url_xml?: string | null
+          relaterat_dokument_url?: string | null
+          rubrik?: string | null
+          talare?: string | null
+        }
+        Update: {
+          anforande?: string | null
+          anforande_id?: string
+          anforandetyp?: string | null
+          created_at?: string | null
+          dok_datum?: string | null
+          dok_titel?: string | null
+          intressent_id?: string | null
+          kon?: string | null
+          nummer?: string | null
+          parti?: string | null
+          protokoll_url_xml?: string | null
+          relaterat_dokument_url?: string | null
+          rubrik?: string | null
+          talare?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "anforanden_intressent_id_fkey"
+            columns: ["intressent_id"]
+            isOneToOne: false
+            referencedRelation: "ledamoter"
+            referencedColumns: ["iid"]
+          },
+        ]
+      }
+      dokument: {
         Row: {
           created_at: string | null
+          datum: string | null
+          dok_id: string
+          doktyp: string | null
+          dokument_url_html: string | null
+          dokument_url_pdf: string | null
+          dokument_url_text: string | null
+          hangar_id: string | null
+          organ: string | null
+          relaterat_id: string | null
+          rm: string | null
+          status: string | null
+          titel: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          datum?: string | null
+          dok_id: string
+          doktyp?: string | null
+          dokument_url_html?: string | null
+          dokument_url_pdf?: string | null
+          dokument_url_text?: string | null
+          hangar_id?: string | null
+          organ?: string | null
+          relaterat_id?: string | null
+          rm?: string | null
+          status?: string | null
+          titel?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          datum?: string | null
+          dok_id?: string
+          doktyp?: string | null
+          dokument_url_html?: string | null
+          dokument_url_pdf?: string | null
+          dokument_url_text?: string | null
+          hangar_id?: string | null
+          organ?: string | null
+          relaterat_id?: string | null
+          rm?: string | null
+          status?: string | null
+          titel?: string | null
+        }
+        Relationships: []
+      }
+      kontaktuppgifter: {
+        Row: {
+          adress: string | null
+          created_at: string | null
+          epost: string | null
           id: number
           iid: string | null
+          telefon: string | null
           typ: string | null
           uppgift: string | null
         }
         Insert: {
+          adress?: string | null
           created_at?: string | null
+          epost?: string | null
           id?: number
           iid?: string | null
+          telefon?: string | null
           typ?: string | null
           uppgift?: string | null
         }
         Update: {
+          adress?: string | null
           created_at?: string | null
+          epost?: string | null
           id?: number
           iid?: string | null
+          telefon?: string | null
           typ?: string | null
           uppgift?: string | null
         }
@@ -159,6 +275,63 @@ export type Database = {
           {
             foreignKeyName: "uppdrag_iid_fkey"
             columns: ["iid"]
+            isOneToOne: false
+            referencedRelation: "ledamoter"
+            referencedColumns: ["iid"]
+          },
+        ]
+      }
+      voteringar: {
+        Row: {
+          avser: string | null
+          created_at: string | null
+          dok_id: string | null
+          id: number
+          intressent_id: string | null
+          namn: string | null
+          parti: string | null
+          rost: string | null
+          valkrets: string | null
+          votering_datum: string | null
+          votering_id: string | null
+        }
+        Insert: {
+          avser?: string | null
+          created_at?: string | null
+          dok_id?: string | null
+          id?: number
+          intressent_id?: string | null
+          namn?: string | null
+          parti?: string | null
+          rost?: string | null
+          valkrets?: string | null
+          votering_datum?: string | null
+          votering_id?: string | null
+        }
+        Update: {
+          avser?: string | null
+          created_at?: string | null
+          dok_id?: string | null
+          id?: number
+          intressent_id?: string | null
+          namn?: string | null
+          parti?: string | null
+          rost?: string | null
+          valkrets?: string | null
+          votering_datum?: string | null
+          votering_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "voteringar_dok_id_fkey"
+            columns: ["dok_id"]
+            isOneToOne: false
+            referencedRelation: "dokument"
+            referencedColumns: ["dok_id"]
+          },
+          {
+            foreignKeyName: "voteringar_intressent_id_fkey"
+            columns: ["intressent_id"]
             isOneToOne: false
             referencedRelation: "ledamoter"
             referencedColumns: ["iid"]
